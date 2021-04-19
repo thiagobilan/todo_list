@@ -17,8 +17,6 @@ class HomeController extends ChangeNotifier {
   HomeController({
     @required this.repository,
   }) {
-    // repository.saveTodo(DateTime.now(), 'Teste 2');
-    // repository.saveTodo(DateTime.now().subtract(Duration(days: 1)), 'Teste 6');
     findAllForWeek();
   }
   Future<void> changeSelectedTab(BuildContext context, int index) async {
@@ -109,5 +107,10 @@ class HomeController extends ChangeNotifier {
     } else if (selectedTab == 2) {
       this.findTodoBySelectedDay();
     }
+  }
+
+  void deletar(TodoModel todo) {
+    repository.removeTodo(todo);
+    findAllForWeek();
   }
 }

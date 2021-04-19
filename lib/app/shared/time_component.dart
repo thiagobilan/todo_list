@@ -33,7 +33,6 @@ class _TimeComponentState extends State<TimeComponent> {
       int.parse(_secSelected),
     );
     widget.onSelectedTime(newDate);
-    print(newDate);
   }
 
   @override

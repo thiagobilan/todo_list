@@ -14,7 +14,6 @@ class TodoRepository {
   }
 
   Future<void> saveTodo(DateTime dateTimeTask, String descricao) async {
-    print('SALVANDO!');
     var conn = await Connection().instace;
     await conn.rawInsert('insert into todo values(?,?,?,?)',
         [null, descricao, dateTimeTask.toIso8601String(), 0]);

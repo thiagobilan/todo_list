@@ -2,6 +2,7 @@ import 'package:ff_navigation_bar/ff_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_list/app/models/todo_model.dart';
 import 'package:todo_list/app/modules/home/home_controller.dart';
 import 'package:todo_list/app/modules/new_task/new_task_page.dart';
 
@@ -67,7 +68,7 @@ class HomePage extends StatelessWidget {
                 }
 
                 if (dayKey == dateFormat.format(today)) {
-                  day = 'Hojeee';
+                  day = 'Hoje';
                 } else if (dayKey ==
                     dateFormat.format(
                       today.add(
@@ -117,32 +118,68 @@ class HomePage extends StatelessWidget {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         var todo = todos[index];
-                        return ListTile(
-                          leading: Checkbox(
-                              value: todo.finalizado,
-                              onChanged: (value) =>
-                                  controller.checkedOrUncheck(todo),
-                              activeColor: Theme.of(context).primaryColor),
-                          title: Text(
-                            todo.descricao,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              decoration: todo.finalizado
-                                  ? TextDecoration.lineThrough
-                                  : null,
+                        return Dismissible(
+                          onDismissed: (direction) => controller.deletar(todo),
+                          direction: DismissDirection.startToEnd,
+                          child: ListTile(
+                            leading: Checkbox(
+                                value: todo.finalizado,
+                                onChanged: (value) =>
+                                    controller.checkedOrUncheck(todo),
+                                activeColor: Theme.of(context).primaryColor),
+                            title: Text(
+                              todo.descricao,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                decoration: todo.finalizado
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                              ),
+                            ),
+                            trailing: Text(
+                              '${todo.dataHora.hour.toString().padLeft(2, "0")}:${todo.dataHora.minute.toString().padLeft(2, "0")}',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                decoration: todo.finalizado
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                              ),
                             ),
                           ),
-                          trailing: Text(
-                            '${todo.dataHora.hour.toString().padLeft(2, "0")}:${todo.dataHora.minute.toString().padLeft(2, "0")}',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              decoration: todo.finalizado
-                                  ? TextDecoration.lineThrough
-                                  : null,
+                          background: Container(
+                            color: Colors.red,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Icon(Icons.delete, color: Colors.white),
                             ),
                           ),
+                          key: ValueKey<TodoModel>(todo),
+                          confirmDismiss: (direction) async {
+                            return await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text("Excluir"),
+                                  content: Text(
+                                      "Deseja excluir a task ${todo.descricao}"),
+                                  actions: [
+                                    FlatButton(
+                                        child: Text("Cancelar"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(false);
+                                        }),
+                                    FlatButton(
+                                      child: Text("Excluir"),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(true),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
                         );
                       },
                     )
@@ -155,4 +192,9 @@ class HomePage extends StatelessWidget {
       },
     );
   }
+
+  //configura o AlertDialog
+
+  //exibe o diálogo
+
 }
